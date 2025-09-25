@@ -4,6 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>My Personal Website</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600&display=swap" rel="stylesheet">
   <!-- Link to external CSS -->
   <link rel="stylesheet" href="index.css">
 </head>
@@ -18,19 +21,16 @@
       <section class="hero-box">
         <!-- Left side: text, description, social icons/buttons -->
         <div class="hero-left">
-          <p class="subtitle">welcome</p>
+          <p class="subtitle">Welcome</p>
           <h2 class="hero-title">
             Hi, I'm <span class="highlight">William Romac</span>,
-            a Computer Science student at Fordham University with 
-            interest in finance, outdoor-sy activities, 
-            and making cool projects. 
+            a Computer Science student at Fordham University with interests in finance,
+            outdoorsy adventures, and building cool projects.
           </h2>
 
           <p class="hero-desc">
-            I am currently in the spring semester of Junior year, taking 
-            cources more aligned with Statisctics and Information / Data Fusion. 
-            My side projectes include currently learning how to use various 
-            Python libraries and building my own websites with functional backends.</p>
+            I'm in the spring semester of my junior year, taking courses aligned with statistics and information/data fusion.
+            My side projects include learning new Python libraries and building websites with functional backends.
           </p>
           
 
@@ -42,18 +42,18 @@
 
             <!-- The Popup Modal -->
             <div id="personal-card-modal" class="modal">
-                <div class="modal-content">
-                    <span class="close-btn">&times;</span>
-                    <h2>William Romac</h2>
-                    <p>School Email: wromac@fordham.edu</p>
-                    <p>Personal Email: william.romac@gmail.com</p>
-                    <p>Phone: (561)-271-5144</p>
-        <!-- Styled buttons for links -->
-        <a href="https://www.linkedin.com/in/william-romac-95378224a/" target="_blank" class="modal-btn">View Profile</a>
-        <a href="resume.pdf" target="_blank" class="modal-btn">Download Resume</a>
-    </div>
-</div>
-            <a href="#" class="social-btn" id="fireButton">Don't Press Me !</a>
+              <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="personal-card-heading">
+                <button type="button" class="close-btn" aria-label="Close personal card">&times;</button>
+                <h2 id="personal-card-heading">William Romac</h2>
+                <p>School Email: wromac@fordham.edu</p>
+                <p>Personal Email: william.romac@gmail.com</p>
+                <p>Phone: (561)-271-5144</p>
+                <!-- Styled buttons for links -->
+                <a href="https://www.linkedin.com/in/william-romac-95378224a/" target="_blank" class="modal-btn">View Profile</a>
+                <a href="resume.pdf" target="_blank" class="modal-btn">Download Resume</a>
+              </div>
+            </div>
+            <a href="#" class="social-btn" id="fireButton">Don't Press Me!</a>
           </div>
         </div>
 
@@ -71,8 +71,7 @@
       <aside class="sidebar">
         <h3>About me</h3>
         <p>
-          Originally from Delray Beach, FL. I am now in school in 
-          NYC enjoying the big city and it's energy. 
+          Originally from Delray Beach, FL, I'm now studying in NYC and soaking up the city's energy.
         </p>
         <p class="tools-title">My primary tools of choice include:</p>
         <ul class="tools-list">
@@ -82,14 +81,11 @@
           
         </ul>
         <p class="about-desc">
-          While I certainly have some preferred tools, I am always 
-          flexible and willing to use the best application for the 
-          job. Flexibility and being driven are key. 
+          While I have go-to tools, I'm always ready to use the best option for the job—staying flexible and driven keeps things fun.
         </p>
         <p class="about-desc">
-          Beyond coding, I'm passionate about being healthy 
-          and always making sure I am getting my 10,000 steps in. 
-          I love running, biking, hiking, and all watersports. 
+          Beyond coding, I'm passionate about staying active and making sure I hit my 10,000 steps.
+          I love running, biking, hiking, and all water sports.
         </p>
       </aside>
 
@@ -119,7 +115,7 @@
 </div>
 
 
-<div class="grid-item design-works">
+<div class="card design-works">
   <a href="YOUR_EXTERNAL_LINK_HERE" target="_blank">
       <img src="pics/WWS.jpg" alt="Willy's Wall Street" class="design-works-image">
   </a>
@@ -169,7 +165,7 @@
 
 
   <!-- CARD 7: PLAYGROUND -->
-  <div class="box journal-box">
+  <div class="card journal-box">
     <a href="journal.html" class="journal-link">
         <span class="journal-title">My Personal Journal</span>
         <span class="journal-subtitle">Raspberry Pi Projects & More</span>

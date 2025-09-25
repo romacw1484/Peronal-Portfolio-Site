@@ -35,22 +35,34 @@ document.addEventListener("DOMContentLoaded", function () {
   const modal = document.getElementById("personal-card-modal");
   const btn = document.getElementById("personal-card-btn");
   const closeBtn = document.querySelector(".close-btn");
+  if (!modal || !btn || !closeBtn) return;
 
-  // Open the modal when clicking the button
-  btn.addEventListener("click", function () {
-      modal.style.display = "flex";
-  });
+  let lastFocus = null;
 
-  // Close the modal when clicking the close button
-  closeBtn.addEventListener("click", function () {
-      modal.style.display = "none";
-  });
+  const openModal = () => {
+    lastFocus = document.activeElement;
+    modal.style.display = "flex";
+    closeBtn.focus();
+  };
 
-  // Close the modal when clicking outside the modal content
+  const closeModal = () => {
+    modal.style.display = "none";
+    if (lastFocus) lastFocus.focus();
+  };
+
+  btn.addEventListener("click", openModal);
+  closeBtn.addEventListener("click", closeModal);
+
   window.addEventListener("click", function (event) {
-      if (event.target === modal) {
-          modal.style.display = "none";
-      }
+    if (event.target === modal) {
+      closeModal();
+    }
+  });
+
+  window.addEventListener("keydown", function (event) {
+    if (event.key === "Escape" && modal.style.display === "flex") {
+      closeModal();
+    }
   });
 });
 
@@ -158,6 +170,28 @@ document.addEventListener("DOMContentLoaded", function() {
       requestAnimationFrame(loop);
     });
   }
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+  const nowText = document.getElementById("now-text");
+  if (!nowText) return;
+
+  const statuses = [
+    "Studying for exams",
+    "Running in Central Park",
+    "Prototyping a new project",
+    "Exploring data viz ideas"
+  ];
+
+  let index = 0;
+  setInterval(() => {
+    index = (index + 1) % statuses.length;
+    nowText.style.opacity = 0;
+    setTimeout(() => {
+      nowText.textContent = statuses[index];
+      nowText.style.opacity = 1;
+    }, 250);
+  }, 5000);
 });
 
 //
