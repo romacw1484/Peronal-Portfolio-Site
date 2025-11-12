@@ -2,303 +2,232 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>My Enhanced Photo Gallery</title>
-
-  <style>
-    /* ------------------------------
-       BASIC STYLES
-    ------------------------------ */
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #222;
-      color: #fff;
-      padding: 1rem;
-      position: relative;
-      min-height: 100vh;
-    }
-
-    h1 {
-      text-align: center;
-      margin-bottom: 1.5rem;
-    }
-
-    /* ------------------------------
-       HOME BUTTON
-    ------------------------------ */
-    .home-button {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      background: #444;
-      color: #fff;
-      padding: 8px 12px;
-      border-radius: 4px;
-      text-decoration: none;
-      font-size: 14px;
-      z-index: 99999; /* Above everything else */
-      transition: background 0.2s ease;
-    }
-
-    .home-button:hover {
-      background: #666;
-    }
-
-    /* ------------------------------
-       GALLERY GRID
-    ------------------------------ */
-    .gallery {
-      display: grid;
-      gap: 1rem;
-      max-width: 1200px;
-      margin: 0 auto;
-      /* Responsive columns: auto-fit the given min width */
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    }
-
-    .gallery img {
-      width: 100%;
-      height: auto;
-      display: block;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: opacity 0.2s ease;
-    }
-
-    .gallery img:hover {
-      opacity: 0.8;
-    }
-
-    /* ------------------------------
-       MODAL / LIGHTBOX
-    ------------------------------ */
-    .modal {
-      display: none;          /* Hidden by default */
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background-color: rgba(0, 0, 0, 0.9);
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-      overflow: hidden;       /* So we don't scroll behind the modal */
-    }
-
-    .modal-content {
-      max-width: 90%;
-      max-height: 90%;
-      border: 2px solid #fff;
-      border-radius: 4px;
-      object-fit: cover;
-    }
-
-    /* Fade in animation when opening */
-    .modal.fade-in {
-      animation: fadeIn 0.3s ease forwards;
-    }
-    /* Fade out animation when closing */
-    .modal.fade-out {
-      animation: fadeOut 0.3s ease forwards;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to   { opacity: 1; }
-    }
-    @keyframes fadeOut {
-      from { opacity: 1; }
-      to   { opacity: 0; }
-    }
-
-    /* ------------------------------
-       NAVIGATION (CLOSE / ARROWS)
-    ------------------------------ */
-    .close-btn, .nav-arrow {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 3rem;
-      color: #fff;
-      cursor: pointer;
-      transition: 0.2s;
-      user-select: none; /* Prevent text selection */
-    }
-
-    .close-btn {
-      top: 5%;
-      right: 5%;
-      transform: none; /* override the arrow transform */
-    }
-
-    .close-btn:hover {
-      color: #ff5555;
-    }
-
-    .nav-arrow {
-      width: 2rem;
-      height: 2rem;
-      line-height: 2rem;
-      text-align: center;
-      background: rgba(255, 255, 255, 0.2);
-      border-radius: 50%;
-      padding: 0.2rem 0.4rem;
-    }
-
-    .nav-arrow:hover {
-      background: rgba(255, 255, 255, 0.4);
-    }
-
-    .nav-arrow.left {
-      left: 2%;
-    }
-
-    .nav-arrow.right {
-      right: 2%;
-    }
-
-    /* Hide the arrows on very small screens if you like */
-    @media (max-width: 500px) {
-      .nav-arrow {
-        display: none;
-      }
-    }
-  </style>
+  <title>Photo Archive</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="photo.css">
 </head>
 <body>
+  <header class="photo-hero">
+    <a href="index.html" class="home-button">Back Home</a>
+    <p class="eyebrow">Personal work</p>
+    <h1>Photo Archive</h1>
+    <p class="hero-copy">
+      A living catalog of digital and 35mm film frames. Use the filters below to jump between cameras
+      or view everything at once.
+    </p>
+  </header>
 
-  <!-- "Home" button linking to your main homepage -->
-  <a href="index.html" class="home-button">Home</a>
+  <main class="photo-main">
+    <section class="gallery-controls">
+      <p class="controls-label">Filter by capture method</p>
+      <div class="filter-buttons">
+        <button type="button" data-filter="all" class="filter-button active">All Photos</button>
+        <button type="button" data-filter="digital-nikon" class="filter-button">Nikon DSLR</button>
+        <button type="button" data-filter="film-35mm" class="filter-button">35mm Film</button>
+      </div>
+    </section>
 
-  <h1>My Enhanced Photo Gallery</h1>
+    <section class="gallery-grid" id="gallery" aria-live="polite"></section>
+  </main>
 
-  <!-- THUMBNAIL GALLERY -->
-  <div class="gallery" id="gallery">
-    <!-- Each image references the same path in src= and data-full=, so it displays the same file as the thumbnail & enlarged photo -->
-    <img src="photos/IMG_3348.jpg"   alt="Photo 1"  data-full="photos/IMG_3348.jpg"   data-index="0">
-    <img src="photos/IMG_3352.jpg"   alt="Photo 2"  data-full="photos/IMG_3352.jpg"   data-index="1">
-    <img src="photos/IMG_3354.jpg"   alt="Photo 3"  data-full="photos/IMG_3354.jpg"   data-index="2">
-    <img src="photos/IMG_3356.jpg"   alt="Photo 4"  data-full="photos/IMG_3356.jpg"   data-index="3">
-    <img src="photos/IMG_3359.jpg"   alt="Photo 5"  data-full="photos/IMG_3359.jpg"   data-index="4">
-    <img src="photos/IMG_3361.jpg"   alt="Photo 6"  data-full="photos/IMG_3361.jpg"   data-index="5">
-    <img src="photos/IMG_3363.jpg"   alt="Photo 7"  data-full="photos/IMG_3363.jpg"   data-index="6">
-    <img src="photos/IMG_3365.jpg"   alt="Photo 8"  data-full="photos/IMG_3365.jpg"   data-index="7">
-    <img src="photos/IMG_3369.jpg"   alt="Photo 9"  data-full="photos/IMG_3369.jpg"   data-index="8">
-    <img src="photos/IMG_3370.jpg"   alt="Photo 10" data-full="photos/IMG_3370.jpg"   data-index="9">
-    <img src="photos/IMG_3371.jpg"   alt="Photo 11" data-full="photos/IMG_3371.jpg"   data-index="10">
-    <img src="photos/IMG_3372.jpg"   alt="Photo 12" data-full="photos/IMG_3372.jpg"   data-index="11">
-    <img src="photos/IMG_3376.jpg"   alt="Photo 13" data-full="photos/IMG_3376.jpg"   data-index="12">
-    <img src="photos/IMG_3383.jpg"   alt="Photo 14" data-full="photos/IMG_3383.jpg"   data-index="13">
-    <img src="photos/DSC_0004.jpg"   alt="Photo 15" data-full="photos/DSC_0004.JPG"   data-index="14">
-    <img src="photos/DSC_0029.jpg"   alt="Photo 16" data-full="photos/DSC_0029.JPG"   data-index="15">
-    <img src="photos/botanswaterfall.jpg" alt="Photo 17" data-full="photos/botanswaterfall.JPG" data-index="16">
-    <img src="photos/bridge.jpg"     alt="Photo 18" data-full="photos/bridge.JPG"     data-index="17">
-    <img src="photos/bridgelong.jpg" alt="Photo 19" data-full="photos/bridgelong.JPG" data-index="18">
-    <img src="photos/door.jpg"       alt="Photo 20" data-full="photos/door.JPG"       data-index="19">
-    <img src="photos/field.jpg"      alt="Photo 21" data-full="photos/field.JPG"      data-index="20">
-    <img src="photos/futurepool.jpg" alt="Photo 22" data-full="photos/futurepool.JPG" data-index="21">
-    <img src="photos/jail.jpg"       alt="Photo 23" data-full="photos/jail.JPG"       data-index="22">
-    <img src="photos/kors.jpg"       alt="Photo 24" data-full="photos/kors.JPG"       data-index="23">
-    <img src="photos/modern.jpg"     alt="Photo 25" data-full="photos/modern.JPG"     data-index="24">
-    <img src="photos/riverflow.jpg"  alt="Photo 26" data-full="photos/riverflow.JPG"  data-index="25">
-    <img src="photos/roofcorner.jpg" alt="Photo 27" data-full="photos/roofcorner.JPG" data-index="26">
-    <img src="photos/structure.jpg"  alt="Photo 28" data-full="photos/structure.JPG"  data-index="27">
-    <img src="photos/tree.jpg"       alt="Photo 29" data-full="photos/tree.JPG"       data-index="28">
-    <img src="photos/views.jpg"      alt="Photo 30" data-full="photos/views.JPG"      data-index="29">
-    <img src="photos/wierdbuilding.jpg" alt="Photo 31" data-full="photos/wierdbuilding.JPG" data-index="30">
+  <div id="modal" class="modal" aria-hidden="true">
+    <button id="closeModal" class="close-btn" aria-label="Close gallery">&times;</button>
+    <button id="prevPhoto" class="nav-arrow left" aria-label="Previous photo">&#8249;</button>
+    <figure class="modal-frame">
+      <img id="modalImage" class="modal-content" alt="">
+      <figcaption id="modalCaption"></figcaption>
+    </figure>
+    <button id="nextPhoto" class="nav-arrow right" aria-label="Next photo">&#8250;</button>
   </div>
 
-  <!-- MODAL OVERLAY -->
-  <div id="modal" class="modal" onclick="handleOverlayClick(event)">
-    <!-- Close button (“×”) -->
-    <span class="close-btn" onclick="closeModal()">&times;</span>
-
-    <!-- Navigation arrows -->
-    <span class="nav-arrow left" onclick="showPrev()">&lt;</span>
-    <span class="nav-arrow right" onclick="showNext()">&gt;</span>
-
-    <!-- Full-size image -->
-    <img id="modalImage" class="modal-content" alt="Enlarged Photo">
-  </div>
-
+  photos/digital/nikon/botanswaterfall.jpg
   <script>
-    // Grab gallery items and the modal elements
+    const photos = [
+      { src: 'photos/digital/nikon/DSC_0004.jpg', alt: 'DSC_0004', camera: 'Nikon DSLR', film: 'Digital Sensor', group: 'digital-nikon' },
+      { src: 'photos/digital/nikon/DSC_0029.jpg', alt: 'DSC_0029', camera: 'Nikon DSLR', film: 'Digital Sensor', group: 'digital-nikon' },
+      { src: 'photos/digital/nikon/DSC_0046.jpg', alt: 'DSC_0046', camera: 'Nikon DSLR', film: 'Digital Sensor', group: 'digital-nikon' },
+      { src: 'photos/digital/nikon/DSC_0118.JPG', alt: 'DSC_0118', camera: 'Nikon DSLR', film: 'Digital Sensor', group: 'digital-nikon' },
+      { src: 'photos/digital/nikon/botanswaterfall.jpg', alt: 'botanswaterfall', camera: 'Nikon DSLR', film: 'Digital Sensor', group: 'digital-nikon' },
+      { src: 'photos/digital/nikon/bridge.jpg', alt: 'bridge', camera: 'Nikon DSLR', film: 'Digital Sensor', group: 'digital-nikon' },
+      { src: 'photos/digital/nikon/bridgelong.jpg', alt: 'bridgelong', camera: 'Nikon DSLR', film: 'Digital Sensor', group: 'digital-nikon' },
+      { src: 'photos/digital/nikon/door.jpg', alt: 'door', camera: 'Nikon DSLR', film: 'Digital Sensor', group: 'digital-nikon' },
+      { src: 'photos/digital/nikon/field.jpg', alt: 'field', camera: 'Nikon DSLR', film: 'Digital Sensor', group: 'digital-nikon' },
+      { src: 'photos/digital/nikon/futurepool.jpg', alt: 'futurepool', camera: 'Nikon DSLR', film: 'Digital Sensor', group: 'digital-nikon' },
+      { src: 'photos/digital/nikon/jail.jpg', alt: 'jail', camera: 'Nikon DSLR', film: 'Digital Sensor', group: 'digital-nikon' },
+      { src: 'photos/digital/nikon/kors.jpg', alt: 'kors', camera: 'Nikon DSLR', film: 'Digital Sensor', group: 'digital-nikon' },
+      { src: 'photos/digital/nikon/modern.jpg', alt: 'modern', camera: 'Nikon DSLR', film: 'Digital Sensor', group: 'digital-nikon' },
+      { src: 'photos/digital/nikon/riverflow.jpg', alt: 'riverflow', camera: 'Nikon DSLR', film: 'Digital Sensor', group: 'digital-nikon' },
+      { src: 'photos/digital/nikon/roofcorner.jpg', alt: 'roofcorner', camera: 'Nikon DSLR', film: 'Digital Sensor', group: 'digital-nikon' },
+      { src: 'photos/digital/nikon/structure.jpg', alt: 'structure', camera: 'Nikon DSLR', film: 'Digital Sensor', group: 'digital-nikon' },
+      { src: 'photos/digital/nikon/tree.jpg', alt: 'tree', camera: 'Nikon DSLR', film: 'Digital Sensor', group: 'digital-nikon' },
+      { src: 'photos/digital/nikon/views.jpg', alt: 'views', camera: 'Nikon DSLR', film: 'Digital Sensor', group: 'digital-nikon' },
+      { src: 'photos/digital/nikon/wierdbuilding.jpg', alt: 'wierdbuilding', camera: 'Nikon DSLR', film: 'Digital Sensor', group: 'digital-nikon' },
+      { src: 'photos/film/35mm/IMG_3348.jpg', alt: 'IMG_3348', camera: '35mm Film', film: 'Kodak Ektar 100', group: 'film-35mm' },
+      { src: 'photos/film/35mm/IMG_3352.jpg', alt: 'IMG_3352', camera: '35mm Film', film: 'Kodak Ektar 100', group: 'film-35mm' },
+      { src: 'photos/film/35mm/IMG_3354.jpg', alt: 'IMG_3354', camera: '35mm Film', film: 'Kodak Ektar 100', group: 'film-35mm' },
+      { src: 'photos/film/35mm/IMG_3356.jpg', alt: 'IMG_3356', camera: '35mm Film', film: 'Kodak Ektar 100', group: 'film-35mm' },
+      { src: 'photos/film/35mm/IMG_3359.jpg', alt: 'IMG_3359', camera: '35mm Film', film: 'Kodak Ektar 100', group: 'film-35mm' },
+      { src: 'photos/film/35mm/IMG_3361.jpg', alt: 'IMG_3361', camera: '35mm Film', film: 'Kodak Ektar 100', group: 'film-35mm' },
+      { src: 'photos/film/35mm/IMG_3363.jpg', alt: 'IMG_3363', camera: '35mm Film', film: 'Kodak Ektar 100', group: 'film-35mm' },
+      { src: 'photos/film/35mm/IMG_3365.jpg', alt: 'IMG_3365', camera: '35mm Film', film: 'Kodak Ektar 100', group: 'film-35mm' },
+      { src: 'photos/film/35mm/IMG_3369.jpg', alt: 'IMG_3369', camera: '35mm Film', film: 'Kodak Ektar 100', group: 'film-35mm' },
+      { src: 'photos/film/35mm/IMG_3370.jpg', alt: 'IMG_3370', camera: '35mm Film', film: 'Kodak Ektar 100', group: 'film-35mm' },
+      { src: 'photos/film/35mm/IMG_3371.jpg', alt: 'IMG_3371', camera: '35mm Film', film: 'Kodak Ektar 100', group: 'film-35mm' },
+      { src: 'photos/film/35mm/IMG_3372.jpg', alt: 'IMG_3372', camera: '35mm Film', film: 'Kodak Ektar 100', group: 'film-35mm' },
+      { src: 'photos/film/35mm/IMG_3376.jpg', alt: 'IMG_3376', camera: '35mm Film', film: 'Kodak Ektar 100', group: 'film-35mm' },
+      { src: 'photos/film/35mm/IMG_3383.jpg', alt: 'IMG_3383', camera: '35mm Film', film: 'Kodak Ektar 100', group: 'film-35mm' },
+      { src: 'photos/film/35mm/99430001.JPG', alt: '99430001', camera: '35mm Film', film: 'Kodak 400 TX', group: 'film-35mm' },
+      { src: 'photos/film/35mm/99430003.JPG', alt: '99430003', camera: '35mm Film', film: 'Kodak 400 TX', group: 'film-35mm' },
+      { src: 'photos/film/35mm/99430004.jpeg', alt: '99430004', camera: '35mm Film', film: 'Kodak 400 TX', group: 'film-35mm' },
+      { src: 'photos/film/35mm/99430007.JPG', alt: '99430007', camera: '35mm Film', film: 'Kodak 400 TX', group: 'film-35mm' },
+      { src: 'photos/film/35mm/99430009.JPG', alt: '99430009', camera: '35mm Film', film: 'Kodak 400 TX', group: 'film-35mm' },
+      { src: 'photos/film/35mm/99430010.JPG', alt: '99430010', camera: '35mm Film', film: 'Kodak 400 TX', group: 'film-35mm' },
+      { src: 'photos/film/35mm/994300123.JPG', alt: '994300123', camera: '35mm Film', film: 'Kodak 400 TX', group: 'film-35mm' },
+      { src: 'photos/film/35mm/99430014.JPG', alt: '99430014', camera: '35mm Film', film: 'Kodak 400 TX', group: 'film-35mm' },
+      { src: 'photos/film/35mm/99430018.JPG', alt: '99430018', camera: '35mm Film', film: 'Kodak 400 TX', group: 'film-35mm' },
+      { src: 'photos/film/35mm/99430020.JPG', alt: '99430020', camera: '35mm Film', film: 'Kodak 400 TX', group: 'film-35mm' },
+      { src: 'photos/film/35mm/99430023.JPG', alt: '99430023', camera: '35mm Film', film: 'Kodak 400 TX', group: 'film-35mm' },
+      { src: 'photos/film/35mm/99430024.JPG', alt: '99430024', camera: '35mm Film', film: 'Kodak 400 TX', group: 'film-35mm' },
+      { src: 'photos/film/35mm/99430025.JPG', alt: '99430025', camera: '35mm Film', film: 'Kodak 400 TX', group: 'film-35mm' },
+      { src: 'photos/film/35mm/99430027.JPG', alt: '99430027', camera: '35mm Film', film: 'Kodak 400 TX', group: 'film-35mm' },
+      { src: 'photos/film/35mm/99430028.JPG', alt: '99430028', camera: '35mm Film', film: 'Kodak 400 TX', group: 'film-35mm' },
+      { src: 'photos/film/35mm/frame42.jpg', alt: 'frame42', camera: '35mm Film', film: 'Kodak 400 TX', group: 'film-35mm' },
+      { src: 'photos/film/35mm/frame44.jpg', alt: 'frame44', camera: '35mm Film', film: 'Kodak 400 TX', group: 'film-35mm' },
+      { src: 'photos/film/35mm/frame45.jpg', alt: 'frame45', camera: '35mm Film', film: 'Kodak 400 TX', group: 'film-35mm' },
+      { src: 'photos/film/35mm/frame48.jpg', alt: 'frame48', camera: '35mm Film', film: 'Kodak 400 TX', group: 'film-35mm' },
+      { src: 'photos/film/35mm/frame49.jpg', alt: 'frame49', camera: '35mm Film', film: 'Kodak 400 TX', group: 'film-35mm' },
+      { src: 'photos/film/35mm/frame50.jpg', alt: 'frame50', camera: '35mm Film', film: 'Kodak 400 TX', group: 'film-35mm' },
+      { src: 'photos/film/35mm/frame51.jpg', alt: 'frame51', camera: '35mm Film', film: 'Kodak 400 TX', group: 'film-35mm' },
+      { src: 'photos/film/35mm/frame52.jpg', alt: 'frame52', camera: '35mm Film', film: 'Kodak 400 TX', group: 'film-35mm' },
+      { src: 'photos/film/35mm/img20251108_00194853.jpg', alt: 'img20251108_00194853', camera: '35mm Film', film: 'Kodak 400 TX', group: 'film-35mm' },
+      { src: 'photos/film/35mm/img20251108_00194867.jpg', alt: 'img20251108_00194867', camera: '35mm Film', film: 'Kodak 400 TX', group: 'film-35mm' },
+      { src: 'photos/film/35mm/img20251108_00194884.jpg', alt: 'img20251108_00194884', camera: '35mm Film', film: 'Kodak 400 TX', group: 'film-35mm' },
+      { src: 'photos/film/35mm/img20251108_00194895.jpg', alt: 'img20251108_00194895', camera: '35mm Film', film: 'Kodak 400 TX', group: 'film-35mm' },
+      { src: 'photos/film/35mm/img20251108_00194900.jpg', alt: 'img20251108_00194900', camera: '35mm Film', film: 'Kodak 400 TX', group: 'film-35mm' }
+    ];
+
     const gallery = document.getElementById('gallery');
     const modal = document.getElementById('modal');
     const modalImage = document.getElementById('modalImage');
+    const modalCaption = document.getElementById('modalCaption');
+    const closeModalBtn = document.getElementById('closeModal');
+    const prevPhotoBtn = document.getElementById('prevPhoto');
+    const nextPhotoBtn = document.getElementById('nextPhoto');
+    const filterButtons = document.querySelectorAll('[data-filter]');
 
-    // We'll store the current index in the modal to navigate
-    let currentIndex = 0;
+    let activeFilter = 'all';
+    let visibleIndices = [];
+    let currentVisiblePosition = null;
 
-    // When user clicks any of the images in gallery:
-    gallery.addEventListener('click', (e) => {
-      const target = e.target;
-      if (target.tagName.toLowerCase() === 'img' && target.dataset.full) {
-        // Show the modal with the full-size image
-        currentIndex = parseInt(target.dataset.index, 10);
-        openModal(target.dataset.full);
+    function renderGallery(filter = 'all') {
+      activeFilter = filter;
+      gallery.innerHTML = '';
+      visibleIndices = [];
+
+      photos.forEach((photo, index) => {
+        if (filter === 'all' || photo.group === filter) {
+          visibleIndices.push(index);
+
+          const article = document.createElement('article');
+          article.className = 'gallery-item';
+          article.innerHTML = `
+            <button class="gallery-thumb" data-index="${index}" aria-label="View ${photo.alt}">
+              <img src="${photo.src}" alt="${photo.alt}">
+            </button>
+            <div class="gallery-meta">
+              <p class="camera-label">${photo.camera}</p>
+              <p class="film-label">${photo.film}</p>
+            </div>
+          `;
+          gallery.appendChild(article);
+        }
+      });
+
+      filterButtons.forEach((button) => {
+        button.classList.toggle('active', button.dataset.filter === filter);
+      });
+
+      gallery.dataset.empty = visibleIndices.length === 0;
+    }
+
+    function updateModal(photoIndex) {
+      const photo = photos[photoIndex];
+      modalImage.src = photo.src;
+      modalImage.alt = photo.alt;
+      modalCaption.textContent = `${photo.camera} • ${photo.film}`;
+    }
+
+    function openModal(photoIndex) {
+      updateModal(photoIndex);
+      modal.classList.add('open');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('modal-open');
+      if (!visibleIndices.length) {
+        currentVisiblePosition = null;
+        return;
       }
+      const position = visibleIndices.indexOf(photoIndex);
+      currentVisiblePosition = position === -1 ? 0 : position;
+    }
+
+    function closeModal() {
+      modal.classList.remove('open');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('modal-open');
+      modalImage.src = '';
+      currentVisiblePosition = null;
+    }
+
+    function showRelative(step) {
+      if (!visibleIndices.length) return;
+      if (currentVisiblePosition === null) currentVisiblePosition = 0;
+      currentVisiblePosition = (currentVisiblePosition + step + visibleIndices.length) % visibleIndices.length;
+      updateModal(visibleIndices[currentVisiblePosition]);
+    }
+
+    gallery.addEventListener('click', (event) => {
+      const targetButton = event.target.closest('.gallery-thumb');
+      if (!targetButton) return;
+      const photoIndex = Number(targetButton.dataset.index);
+      openModal(photoIndex);
     });
 
-    // OPEN the modal
-    function openModal(fullImgSrc) {
-      modalImage.src = fullImgSrc;
-      modal.classList.remove('fade-out');
-      modal.classList.add('fade-in');
-      modal.style.display = 'flex';
-      // Prevent body scroll behind modal
-      document.body.style.overflow = 'hidden';
-    }
+    closeModalBtn.addEventListener('click', closeModal);
+    prevPhotoBtn.addEventListener('click', () => showRelative(-1));
+    nextPhotoBtn.addEventListener('click', () => showRelative(1));
 
-    // CLOSE the modal
-    function closeModal() {
-      // Add a fade-out animation, then fully hide the modal at the end
-      modal.classList.remove('fade-in');
-      modal.classList.add('fade-out');
-      // Wait for the animation to finish (300ms), then hide the modal
-      setTimeout(() => {
-        modal.style.display = 'none';
-        document.body.style.overflow = 'auto'; // re-enable scroll
-      }, 300);
-    }
-
-    // Go to previous image
-    function showPrev() {
-      const images = document.querySelectorAll('#gallery img');
-      currentIndex = (currentIndex - 1 + images.length) % images.length;
-      modalImage.src = images[currentIndex].dataset.full;
-    }
-
-    // Go to next image
-    function showNext() {
-      const images = document.querySelectorAll('#gallery img');
-      currentIndex = (currentIndex + 1) % images.length;
-      modalImage.src = images[currentIndex].dataset.full;
-    }
-
-    // Clicking outside the image (on the overlay) also closes modal
-    function handleOverlayClick(event) {
+    modal.addEventListener('click', (event) => {
       if (event.target === modal) {
         closeModal();
       }
-    }
+    });
 
-    // Keyboard navigation
     document.addEventListener('keydown', (event) => {
-      // Only respond if the modal is open
-      if (modal.style.display === 'flex') {
-        if (event.key === 'Escape') {
-          closeModal();
-        } else if (event.key === 'ArrowLeft') {
-          showPrev();
-        } else if (event.key === 'ArrowRight') {
-          showNext();
-        }
+      if (!modal.classList.contains('open')) return;
+      if (event.key === 'Escape') {
+        closeModal();
+      } else if (event.key === 'ArrowLeft') {
+        showRelative(-1);
+      } else if (event.key === 'ArrowRight') {
+        showRelative(1);
       }
     });
+
+    filterButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        const nextFilter = button.dataset.filter;
+        if (modal.classList.contains('open')) {
+          closeModal();
+        }
+        if (nextFilter !== activeFilter) {
+          renderGallery(nextFilter);
+        }
+      });
+    });
+
+    renderGallery();
   </script>
 </body>
 </html>
